@@ -1,0 +1,860 @@
+From 5f15937d1d9c6cd37af23fcc376bd67a9449e496 Mon Sep 17 00:00:00 2001
+From: cleanbaja <circutrider21@outlook.com>
+Date: Thu, 24 Feb 2022 18:28:10 -0600
+Subject: [PATCH 1/2] crecent: Added Support
+
+---
+ checkedout.xbstrap                            |   0
+ fetched.xbstrap                               |   0
+ meson.build                                   |   4 +
+ patched.xbstrap                               |   0
+ regenerated.xbstrap                           |   0
+ sysdeps/crecent/crt-x86_64/crt0.S             |   7 +
+ sysdeps/crecent/generic/entry.cpp             |  34 ++
+ sysdeps/crecent/generic/generic.cpp           | 322 ++++++++++++++++++
+ sysdeps/crecent/include/abi-bits/abi.h        |   1 +
+ sysdeps/crecent/include/abi-bits/auxv.h       |   1 +
+ sysdeps/crecent/include/abi-bits/blkcnt_t.h   |   1 +
+ sysdeps/crecent/include/abi-bits/blksize_t.h  |   1 +
+ sysdeps/crecent/include/abi-bits/dev_t.h      |   1 +
+ sysdeps/crecent/include/abi-bits/errno.h      |   1 +
+ sysdeps/crecent/include/abi-bits/fcntl.h      |   1 +
+ sysdeps/crecent/include/abi-bits/gid_t.h      |   1 +
+ sysdeps/crecent/include/abi-bits/in.h         |   1 +
+ sysdeps/crecent/include/abi-bits/ino_t.h      |   1 +
+ sysdeps/crecent/include/abi-bits/limits.h     |   1 +
+ sysdeps/crecent/include/abi-bits/mode_t.h     |   1 +
+ sysdeps/crecent/include/abi-bits/nlink_t.h    |   1 +
+ sysdeps/crecent/include/abi-bits/pid_t.h      |   1 +
+ sysdeps/crecent/include/abi-bits/resource.h   |   1 +
+ .../crecent/include/abi-bits/seek-whence.h    |   1 +
+ sysdeps/crecent/include/abi-bits/signal.h     |   1 +
+ sysdeps/crecent/include/abi-bits/socket.h     |   1 +
+ sysdeps/crecent/include/abi-bits/stat.h       |   1 +
+ sysdeps/crecent/include/abi-bits/termios.h    |   1 +
+ sysdeps/crecent/include/abi-bits/time.h       |   1 +
+ sysdeps/crecent/include/abi-bits/uid_t.h      |   1 +
+ sysdeps/crecent/include/abi-bits/vm-flags.h   |   1 +
+ sysdeps/crecent/include/abi-bits/wait.h       |   1 +
+ sysdeps/crecent/include/crecent/syscall.h     | 119 +++++++
+ sysdeps/crecent/meson.build                   |  51 +++
+ 34 files changed, 561 insertions(+)
+ create mode 100644 checkedout.xbstrap
+ create mode 100644 fetched.xbstrap
+ create mode 100644 patched.xbstrap
+ create mode 100644 regenerated.xbstrap
+ create mode 100644 sysdeps/crecent/crt-x86_64/crt0.S
+ create mode 100644 sysdeps/crecent/generic/entry.cpp
+ create mode 100644 sysdeps/crecent/generic/generic.cpp
+ create mode 120000 sysdeps/crecent/include/abi-bits/abi.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/auxv.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/blkcnt_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/blksize_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/dev_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/errno.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/fcntl.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/gid_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/in.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/ino_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/limits.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/mode_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/nlink_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/pid_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/resource.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/seek-whence.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/signal.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/socket.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/stat.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/termios.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/time.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/uid_t.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/vm-flags.h
+ create mode 120000 sysdeps/crecent/include/abi-bits/wait.h
+ create mode 100644 sysdeps/crecent/include/crecent/syscall.h
+ create mode 100644 sysdeps/crecent/meson.build
+
+diff --git a/checkedout.xbstrap b/checkedout.xbstrap
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/fetched.xbstrap b/fetched.xbstrap
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/meson.build b/meson.build
+index 4027c99a..59c374b0 100644
+--- a/meson.build
++++ b/meson.build
+@@ -127,6 +127,10 @@ elif host_machine.system() == 'dripos'
+ 	rtdl_include_dirs += include_directories('sysdeps/dripos/include')
+ 	libc_include_dirs += include_directories('sysdeps/dripos/include')
+ 	subdir('sysdeps/dripos')
++elif host_machine.system() == 'crecent'
++	rtdl_include_dirs += include_directories('sysdeps/crecent/include')
++	libc_include_dirs += include_directories('sysdeps/crecent/include')
++	subdir('sysdeps/crecent')
+ else
+ 	error('No sysdeps defined for OS: ' + host_machine.system())
+ endif
+diff --git a/patched.xbstrap b/patched.xbstrap
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/regenerated.xbstrap b/regenerated.xbstrap
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/sysdeps/crecent/crt-x86_64/crt0.S b/sysdeps/crecent/crt-x86_64/crt0.S
+new file mode 100644
+index 00000000..0a0a4a0c
+--- /dev/null
++++ b/sysdeps/crecent/crt-x86_64/crt0.S
+@@ -0,0 +1,7 @@
++
++.section .text
++.global _start
++_start:
++    mov $main, %rdi
++    call __mlibc_entry
++
+diff --git a/sysdeps/crecent/generic/entry.cpp b/sysdeps/crecent/generic/entry.cpp
+new file mode 100644
+index 00000000..ee7a794b
+--- /dev/null
++++ b/sysdeps/crecent/generic/entry.cpp
+@@ -0,0 +1,34 @@
++
++#include <stdint.h>
++#include <stdlib.h>
++#include <bits/ensure.h>
++#include <mlibc/elf/startup.h>
++
++// defined by the POSIX library
++void __mlibc_initLocale();
++
++extern "C" uintptr_t *__dlapi_entrystack();
++
++extern char **environ;
++static mlibc::exec_stack_data __mlibc_stack_data;
++
++struct LibraryGuard {
++	LibraryGuard();
++};
++
++static LibraryGuard guard;
++
++LibraryGuard::LibraryGuard() {
++	__mlibc_initLocale();
++
++	// Parse the exec() stack.
++	mlibc::parse_exec_stack(__dlapi_entrystack(), &__mlibc_stack_data);
++	mlibc::set_startup_data(__mlibc_stack_data.argc, __mlibc_stack_data.argv,
++			__mlibc_stack_data.envp);
++}
++
++extern "C" void __mlibc_entry(int (*main_fn)(int argc, char *argv[], char *env[])) {
++	auto result = main_fn(__mlibc_stack_data.argc, __mlibc_stack_data.argv, environ);
++	exit(result);
++}
++
+diff --git a/sysdeps/crecent/generic/generic.cpp b/sysdeps/crecent/generic/generic.cpp
+new file mode 100644
+index 00000000..14bdb783
+--- /dev/null
++++ b/sysdeps/crecent/generic/generic.cpp
+@@ -0,0 +1,322 @@
++#include <crecent/syscall.h>
++
++namespace mlibc {
++
++int sys_gethostname(char *buffer, size_t bufsize) {
++    int ret;
++    UNIMPLMENTED();
++    return ret;
++}
++
++void sys_libc_log(const char *message) {
++    syscall(SYS_DEBUG, message);
++}
++
++void sys_libc_panic() {
++    mlibc::infoLogger() << "\e[31mmlibc: panic!" << frg::endlog;
++    __builtin_unreachable();
++}
++
++int sys_getcwd(char *buffer, size_t size) {
++    UNIMPLMENTED(); 
++    return 0;
++}
++
++int sys_chdir(const char *path) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_tcb_set(void *pointer) {
++    UNIMPLMENTED();
++    return res;
++}
++
++int sys_anon_allocate(size_t size, void **pointer) {
++    // 9x only allocates pages of 4KB, 2MB or 1GB
++    __ensure(!(size & 0xFFF));
++
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_anon_free(void *pointer, size_t size) {
++    UNIMPLMENTED();
++}
++
++#ifndef MLIBC_BUILDING_RTDL
++void sys_exit(int status) {
++    UNIMPLMENTED();
++}
++#endif
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_clock_get(int clock, time_t *secs, long *nanos) {
++    UNIMPLMENTED();
++    return 0;
++}
++#endif
++
++int sys_open(const char *path, int flags, int *fd) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_close(int fd) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_read(int fd, void *buf, size_t count, ssize_t *bytes_read) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_write(int fd, const void *buf, size_t count, ssize_t *bytes_written) {
++    UNIMPLMENTED();
++    return 0;
++}
++#endif
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_ioctl(int fd, unsigned long request, void *arg, int *result) {
++    UNIMPLMENTED();
++    return -ENOSYS;
++}
++#endif
++
++int sys_seek(int fd, off_t offset, int whence, off_t *new_offset) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_vm_map(void *hint, size_t size, int prot, int flags,
++		int fd, off_t offset, void **window) {
++    // As of right now, 9x only supports anonymous mappings
++    __ensure(flags & MAP_ANONYMOUS);
++    UNIMPLMENTED(); 
++    return 0;
++}
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_vm_remap(void *pointer, size_t size, size_t new_size, void **window) { UNIMPLMENTED(); return 0; }
++#endif // !defined(MLIBC_BUILDING_RTDL)
++
++int sys_vm_unmap(void *pointer, size_t size) { UNIMPLMENTED(); return 0; }
++
++#ifndef MLIBC_BUILDING_RTDL
++namespace {
++	int do_fstat(int fd, struct stat *statbuf) {
++		UNIMPLMENTED();
++		return 0;
++	}
++}
++
++int sys_unlinkat(int fd, const char *path, int flags) {
++    __ensure(flags == 0);
++    UNIMPLMENTED();
++    return 0;    
++}
++
++int sys_stat(fsfd_target fsfdt, int fd, const char *path, int flags, struct stat *statbuf) {
++    UNIMPLMENTED();
++    return 0;
++}
++#endif
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_rename(const char *path, const char *new_path) { UNIMPLMENTED(); return 0; }
++#endif
++
++#ifndef MLIBC_BUILDING_RTDL
++int sys_sigaction(int signum, const struct sigaction *act, struct sigaction *oldact) {
++    UNIMPLMENTED();
++    return 0;
++}
++#endif
++
++int sys_futex_wait(int *pointer, int expected, const struct timespec *time) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_futex_wake(int *pointer) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++// All remaining functions are disabled in ldso.
++#ifndef MLIBC_BUILDING_RTDL
++
++int sys_open_dir(const char *path, int *handle) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_read_entries(int handle, void *buffer, size_t max_size, size_t *bytes_read) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_access(const char *path, int mode) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++
++int sys_dup(int fd, int flags, int *newfd) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_dup2(int fd, int flags, int newfd) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_isatty(int fd) {
++    UNIMPLMENTED();
++    return ENOTTY;
++}
++int sys_ttyname(int fd, char *buf, size_t size) {
++    UNIMPLMENTED();
++    return ENOSYS;
++}
++int sys_chroot(const char *path) { UNIMPLMENTED(); return 0; }
++int sys_mkdir(const char *path) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_tcgetattr(int fd, struct termios *attr) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_tcsetattr(int fd, int optional_action, const struct termios *attr) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_tcflow(int fd, int action) {
++    UNIMPLMENTED();;
++    return 0;
++}
++int sys_pipe(int *fds, int flags) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_readlink(const char *path, void *buffer, size_t max_size, ssize_t *length) { UNIMPLMENTED(); return 0; }
++int sys_ftruncate(int fd, size_t size) { UNIMPLMENTED(); return 0; }
++int sys_fallocate(int fd, off_t offset, size_t size) { UNIMPLMENTED(); return 0; }
++int sys_unlink(const char *path) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_symlink(const char *target_path, const char *link_path) { UNIMPLMENTED(); return 0; }
++int sys_fcntl(int fd, int request, va_list args, int *result) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_socket(int family, int type, int protocol, int *fd) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_socketpair(int domain, int type_and_flags, int proto, int *fds) { UNIMPLMENTED(); return 0; }
++int sys_accept(int fd, int *newfd) { UNIMPLMENTED(); return 0; }
++int sys_bind(int fd, const struct sockaddr *addr_ptr, socklen_t addr_length) {
++    UNIMPLMENTED();
++    return -EBADF;
++}
++
++int sys_connect(int fd, const struct sockaddr *addr_ptr, socklen_t addr_length) { UNIMPLMENTED(); return 0; }
++int sys_msg_send(int fd, const struct msghdr *hdr, int flags, ssize_t *length) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_msg_recv(int fd, struct msghdr *hdr, int flags, ssize_t *length) {
++    return 0;
++}
++int sys_sockname(int fd, struct sockaddr *addr_ptr, socklen_t max_addr_length,
++		socklen_t *actual_length) { UNIMPLMENTED(); return 0; }
++int sys_getsockopt(int fd, int layer, int number,
++		void *__restrict buffer, socklen_t *__restrict size) { UNIMPLMENTED(); return 0; }
++int sys_setsockopt(int fd, int layer, int number,
++		const void *buffer, socklen_t size) { UNIMPLMENTED(); return 0; }
++
++int sys_sleep(time_t *secs, long *nanos) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_fork(pid_t *child) {
++    UNIMPLMENTED();
++    return 0;
++}
++int sys_execve(const char *path, char *const argv[], char *const envp[]) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_kill(pid_t pid, int signal) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_waitpid(pid_t pid, int *status, int flags, pid_t *ret_pid) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_getrusage(int who, struct rusage *usage) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_sigprocmask(int how, const sigset_t *__restrict set, sigset_t *__restrict retrieve) {
++    UNIMPLMENTED();
++    return ENOSYS;
++}
++void sys_yield() { UNIMPLMENTED(); return 0; }
++
++gid_t sys_getgid() {
++    UNIMPLMENTED();
++    return 0;
++}
++gid_t sys_getegid() {
++    UNIMPLMENTED();
++    return 0;
++}
++uid_t sys_getuid() {
++    UNIMPLMENTED();
++    return 0;
++}
++uid_t sys_geteuid() {
++    UNIMPLMENTED();
++    return 0;
++}
++pid_t sys_getpid() {
++    UNIMPLMENTED();
++    return pid;
++}
++pid_t sys_getppid() {
++    UNIMPLMENTED();
++    return 0;
++}
++
++pid_t sys_getpgid(pid_t pid) {
++    UNIMPLMENTED();
++    return -ENOSYS;
++}
++
++int sys_setuid(uid_t uid) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++int sys_pselect(int num_fds, fd_set *read_set, fd_set *write_set, fd_set *except_set,
++		const struct timespec *timeout, const sigset_t *sigmask, int *num_events) {
++    UNIMPLMENTED();
++    return 0;
++}
++
++#endif // MLIBC_BUILDING_RTDL
++
++} // namespace mlibc
++
+diff --git a/sysdeps/crecent/include/abi-bits/abi.h b/sysdeps/crecent/include/abi-bits/abi.h
+new file mode 120000
+index 00000000..c9458601
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/abi.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/abi.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/auxv.h b/sysdeps/crecent/include/abi-bits/auxv.h
+new file mode 120000
+index 00000000..b7bb1093
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/auxv.h
+@@ -0,0 +1 @@
++../../../../abis/qword/auxv.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/blkcnt_t.h b/sysdeps/crecent/include/abi-bits/blkcnt_t.h
+new file mode 120000
+index 00000000..e9d9f1b4
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/blkcnt_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/blkcnt_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/blksize_t.h b/sysdeps/crecent/include/abi-bits/blksize_t.h
+new file mode 120000
+index 00000000..c6dfb6e0
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/blksize_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/blksize_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/dev_t.h b/sysdeps/crecent/include/abi-bits/dev_t.h
+new file mode 120000
+index 00000000..0c1143b9
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/dev_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/dev_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/errno.h b/sysdeps/crecent/include/abi-bits/errno.h
+new file mode 120000
+index 00000000..589859fb
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/errno.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/errno.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/fcntl.h b/sysdeps/crecent/include/abi-bits/fcntl.h
+new file mode 120000
+index 00000000..ea5323ad
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/fcntl.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/fcntl.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/gid_t.h b/sysdeps/crecent/include/abi-bits/gid_t.h
+new file mode 120000
+index 00000000..6a772180
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/gid_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/gid_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/in.h b/sysdeps/crecent/include/abi-bits/in.h
+new file mode 120000
+index 00000000..b58c683f
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/in.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/in.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/ino_t.h b/sysdeps/crecent/include/abi-bits/ino_t.h
+new file mode 120000
+index 00000000..10d644e7
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/ino_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/ino_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/limits.h b/sysdeps/crecent/include/abi-bits/limits.h
+new file mode 120000
+index 00000000..1aa58942
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/limits.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/limits.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/mode_t.h b/sysdeps/crecent/include/abi-bits/mode_t.h
+new file mode 120000
+index 00000000..29d77331
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/mode_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/mode_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/nlink_t.h b/sysdeps/crecent/include/abi-bits/nlink_t.h
+new file mode 120000
+index 00000000..7618c27f
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/nlink_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/nlink_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/pid_t.h b/sysdeps/crecent/include/abi-bits/pid_t.h
+new file mode 120000
+index 00000000..3fd26a7f
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/pid_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/pid_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/resource.h b/sysdeps/crecent/include/abi-bits/resource.h
+new file mode 120000
+index 00000000..3e59c750
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/resource.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/resource.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/seek-whence.h b/sysdeps/crecent/include/abi-bits/seek-whence.h
+new file mode 120000
+index 00000000..3bd41efd
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/seek-whence.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/seek-whence.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/signal.h b/sysdeps/crecent/include/abi-bits/signal.h
+new file mode 120000
+index 00000000..b20e5119
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/signal.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/signal.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/socket.h b/sysdeps/crecent/include/abi-bits/socket.h
+new file mode 120000
+index 00000000..0e1d6be9
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/socket.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/socket.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/stat.h b/sysdeps/crecent/include/abi-bits/stat.h
+new file mode 120000
+index 00000000..82642c3c
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/stat.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/stat.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/termios.h b/sysdeps/crecent/include/abi-bits/termios.h
+new file mode 120000
+index 00000000..cfcfe763
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/termios.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/termios.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/time.h b/sysdeps/crecent/include/abi-bits/time.h
+new file mode 120000
+index 00000000..97f3d52d
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/time.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/time.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/uid_t.h b/sysdeps/crecent/include/abi-bits/uid_t.h
+new file mode 120000
+index 00000000..1113eba6
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/uid_t.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/uid_t.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/vm-flags.h b/sysdeps/crecent/include/abi-bits/vm-flags.h
+new file mode 120000
+index 00000000..f1a985e6
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/vm-flags.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/vm-flags.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/abi-bits/wait.h b/sysdeps/crecent/include/abi-bits/wait.h
+new file mode 120000
+index 00000000..6d911c7f
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/wait.h
+@@ -0,0 +1 @@
++../../../../abis/mlibc/wait.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/crecent/syscall.h b/sysdeps/crecent/include/crecent/syscall.h
+new file mode 100644
+index 00000000..baea2363
+--- /dev/null
++++ b/sysdeps/crecent/include/crecent/syscall.h
+@@ -0,0 +1,119 @@
++#ifndef SYSCALL_H
++#define SYSCALL_H
++
++#include <stdint.h>
++
++#define SYS_DEBUG  0
++
++// A Quick macro for unimplemented syscalls
++#define UNIMPLEMENTED()  ({                                              \
++        sys_libc_log("mlibc: Unimplemented Syscall " __FUNCTION__);      \
++        __builtin_unreachable();                                         \
++})
++
++#ifdef __cplusplus
++extern "C"{
++#endif
++
++__attribute__((always_inline))
++static uint64_t syscall0(int call) {
++    uint64_t ret;
++    asm volatile("syscall" : "=a"(ret) : "a"(sc) : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall1(int call, uint64_t arg1) {
++    uint64_t ret;
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall2(int call, uint64_t arg1, uint64_t arg2) {
++    uint64_t ret;
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1), "S"(arg2)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall3(int call, uint64_t arg1, uint64_t arg2, uint64_t arg3) {
++    uint64_t ret;
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall4(int call, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4) {
++    uint64_t ret;
++    register uint64_t r10 asm("r10") = arg4;
++
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall5(int call, uint64_t arg1, uint64_t arg2,
++                          uint64_t arg3, uint64_t arg4, uint64_t arg5) {
++    uint64_t ret;
++    register uint64_t r10 asm("r10") = arg4;
++    register uint64_t r9  asm("r9")  = arg5;
++
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
++                   "r"(r9)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++__attribute__((always_inline))
++static uint64_t syscall6(int call, uint64_t arg1, uint64_t arg2,
++                          uint64_t arg3, uint64_t arg4, uint64_t arg5,
++                          uint64_t arg6) {
++    uint64_t ret;
++    register uint64_t r10 asm("r10") = arg4;
++    register uint64_t r8  asm("r9")  = arg5;
++    register uint64_t r9  asm("r8")  = arg6;
++
++    asm volatile("syscall"
++                 : "=a"(ret)
++                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
++                   "r"(r9), "r"(r8)
++                 : "rcx", "r11", "memory");
++    return ret;
++}
++
++#ifdef __cplusplus
++}
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call) { return syscalln0(call); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0) { return syscalln1(call, arg0); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1) { return syscalln2(call, arg0, arg1); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2) { return syscalln3(call, arg0, arg1, arg2); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3) { return syscalln4(call, arg0, arg1, arg2, arg3); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4)  { return syscalln5(call, arg0, arg1, arg2, arg3, arg4); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5)  { return syscalln6(call, arg0, arg1, arg2, arg3, arg4, arg5); }
++
++    template<typename... T>
++    __attribute__((always_inline)) static inline long syscall(uint64_t call, T... args){
++        return _syscall(call, (uint64_t)(args)...);
++    }
++#else
++    #define GET_SYSCALL(a0, a1, a2, a3, a4, a5, a6, name, ...) name
++    #define syscall(...) GET_SYSCALL(__VA_ARGS__, syscalln6, syscalln5, syscalln4, syscalln3, syscalln2, syscalln1, syscalln0)(__VA_ARGS__) 
++#endif
++
++#endif
++
+diff --git a/sysdeps/crecent/meson.build b/sysdeps/crecent/meson.build
+new file mode 100644
+index 00000000..3e8af0c0
+--- /dev/null
++++ b/sysdeps/crecent/meson.build
+@@ -0,0 +1,51 @@
++rtdl_sources = files(
++   'generic/generic.cpp'
++  )
++
++libc_sources = files(
++   'generic/entry.cpp',
++   'generic/generic.cpp'
++  )
++
++if not no_headers
++  install_headers(
++      'include/abi-bits/abi.h',
++      'include/abi-bits/auxv.h',
++      'include/abi-bits/seek-whence.h',
++      'include/abi-bits/vm-flags.h',
++      'include/abi-bits/errno.h',
++      'include/abi-bits/fcntl.h',
++      'include/abi-bits/in.h',
++      'include/abi-bits/reboot.h',
++      'include/abi-bits/resource.h',
++      'include/abi-bits/stat.h',
++      'include/abi-bits/signal.h',
++      'include/abi-bits/socket.h',
++      'include/abi-bits/termios.h',
++      'include/abi-bits/time.h',
++      'include/abi-bits/blkcnt_t.h',
++      'include/abi-bits/blksize_t.h',
++      'include/abi-bits/dev_t.h',
++      'include/abi-bits/gid_t.h',
++      'include/abi-bits/ino_t.h',
++      'include/abi-bits/mode_t.h',
++      'include/abi-bits/nlink_t.h',
++      'include/abi-bits/pid_t.h',
++      'include/abi-bits/uid_t.h',
++      'include/abi-bits/wait.h',
++      'include/abi-bits/limits.h',
++      subdir: 'abi-bits'
++  )
++endif
++
++if not headers_only
++  crt = custom_target('crt0',
++     build_by_default: true,
++     command: c_compiler.cmd_array()  ['-c', '-o', '@OUTPUT@', '@INPUT@'],
++     input: 'crt-x86_64/crt0.S',
++     output: 'crt0.o',
++     install: true,
++     install_dir: get_option('libdir')
++   )
++endif
++
+-- 
+2.25.1
+

@@ -1,0 +1,220 @@
+From 72d518e8928d2e4cf00a3e0debeefb80c048bb47 Mon Sep 17 00:00:00 2001
+From: cleanbaja <circutrider21@outlook.com>
+Date: Thu, 24 Feb 2022 20:39:56 -0600
+Subject: [PATCH 2/2] crecent: fixed compile bug
+
+---
+ checkedout.xbstrap                        |  0
+ fetched.xbstrap                           |  0
+ patched.xbstrap                           |  0
+ regenerated.xbstrap                       |  0
+ sysdeps/crecent/generic/generic.cpp       | 19 +++++++++--
+ sysdeps/crecent/include/abi-bits/reboot.h |  1 +
+ sysdeps/crecent/include/crecent/syscall.h | 39 ++++++++++++-----------
+ sysdeps/crecent/meson.build               |  2 +-
+ 8 files changed, 38 insertions(+), 23 deletions(-)
+ delete mode 100644 checkedout.xbstrap
+ delete mode 100644 fetched.xbstrap
+ delete mode 100644 patched.xbstrap
+ delete mode 100644 regenerated.xbstrap
+ create mode 120000 sysdeps/crecent/include/abi-bits/reboot.h
+
+diff --git a/checkedout.xbstrap b/checkedout.xbstrap
+deleted file mode 100644
+index e69de29b..00000000
+diff --git a/fetched.xbstrap b/fetched.xbstrap
+deleted file mode 100644
+index e69de29b..00000000
+diff --git a/patched.xbstrap b/patched.xbstrap
+deleted file mode 100644
+index e69de29b..00000000
+diff --git a/regenerated.xbstrap b/regenerated.xbstrap
+deleted file mode 100644
+index e69de29b..00000000
+diff --git a/sysdeps/crecent/generic/generic.cpp b/sysdeps/crecent/generic/generic.cpp
+index 14bdb783..cf89f270 100644
+--- a/sysdeps/crecent/generic/generic.cpp
++++ b/sysdeps/crecent/generic/generic.cpp
+@@ -1,5 +1,18 @@
++
+ #include <crecent/syscall.h>
+ 
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <dirent.h>
++#include <limits.h>
++#include <fcntl.h>
++#include <string.h>
++
++#include <bits/ensure.h>
++#include <mlibc/all-sysdeps.hpp>
++#include <mlibc/debug.hpp>
++
+ namespace mlibc {
+ 
+ int sys_gethostname(char *buffer, size_t bufsize) {
+@@ -29,7 +42,7 @@ int sys_chdir(const char *path) {
+ 
+ int sys_tcb_set(void *pointer) {
+     UNIMPLMENTED();
+-    return res;
++    return 0;
+ }
+ 
+ int sys_anon_allocate(size_t size, void **pointer) {
+@@ -273,7 +286,7 @@ int sys_sigprocmask(int how, const sigset_t *__restrict set, sigset_t *__restric
+     UNIMPLMENTED();
+     return ENOSYS;
+ }
+-void sys_yield() { UNIMPLMENTED(); return 0; }
++void sys_yield() { UNIMPLMENTED(); }
+ 
+ gid_t sys_getgid() {
+     UNIMPLMENTED();
+@@ -293,7 +306,7 @@ uid_t sys_geteuid() {
+ }
+ pid_t sys_getpid() {
+     UNIMPLMENTED();
+-    return pid;
++    return 0;
+ }
+ pid_t sys_getppid() {
+     UNIMPLMENTED();
+diff --git a/sysdeps/crecent/include/abi-bits/reboot.h b/sysdeps/crecent/include/abi-bits/reboot.h
+new file mode 120000
+index 00000000..ecc3ddb9
+--- /dev/null
++++ b/sysdeps/crecent/include/abi-bits/reboot.h
+@@ -0,0 +1 @@
++../../../../abis/linux/x86_64/reboot.h
+\ No newline at end of file
+diff --git a/sysdeps/crecent/include/crecent/syscall.h b/sysdeps/crecent/include/crecent/syscall.h
+index baea2363..5526242f 100644
+--- a/sysdeps/crecent/include/crecent/syscall.h
++++ b/sysdeps/crecent/include/crecent/syscall.h
+@@ -5,10 +5,11 @@
+ 
+ #define SYS_DEBUG  0
+ 
+-// A Quick macro for unimplemented syscalls
+-#define UNIMPLEMENTED()  ({                                              \
+-        sys_libc_log("mlibc: Unimplemented Syscall " __FUNCTION__);      \
+-        __builtin_unreachable();                                         \
++// A Quick macro/function for unimplemented syscalls
++#define UNIMPLMENTED(fnc)  ({                                \
++        sys_libc_log("mlibc: Unimplemented Syscall ");       \
++        sys_libc_log(__func__);                              \
++        __builtin_unreachable();                             \
+ })
+ 
+ #ifdef __cplusplus
+@@ -18,7 +19,7 @@ extern "C"{
+ __attribute__((always_inline))
+ static uint64_t syscall0(int call) {
+     uint64_t ret;
+-    asm volatile("syscall" : "=a"(ret) : "a"(sc) : "rcx", "r11", "memory");
++    asm volatile("syscall" : "=a"(ret) : "a"(call) : "rcx", "r11", "memory");
+     return ret;
+ }
+ 
+@@ -27,7 +28,7 @@ static uint64_t syscall1(int call, uint64_t arg1) {
+     uint64_t ret;
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1)
++                 : "a"(call), "D"(arg1)
+                  : "rcx", "r11", "memory");
+     return ret;
+ }
+@@ -37,7 +38,7 @@ static uint64_t syscall2(int call, uint64_t arg1, uint64_t arg2) {
+     uint64_t ret;
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1), "S"(arg2)
++                 : "a"(call), "D"(arg1), "S"(arg2)
+                  : "rcx", "r11", "memory");
+     return ret;
+ }
+@@ -47,7 +48,7 @@ static uint64_t syscall3(int call, uint64_t arg1, uint64_t arg2, uint64_t arg3)
+     uint64_t ret;
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3)
++                 : "a"(call), "D"(arg1), "S"(arg2), "d"(arg3)
+                  : "rcx", "r11", "memory");
+     return ret;
+ }
+@@ -59,7 +60,7 @@ static uint64_t syscall4(int call, uint64_t arg1, uint64_t arg2, uint64_t arg3,
+ 
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10)
++                 : "a"(call), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10)
+                  : "rcx", "r11", "memory");
+     return ret;
+ }
+@@ -73,7 +74,7 @@ static uint64_t syscall5(int call, uint64_t arg1, uint64_t arg2,
+ 
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
++                 : "a"(call), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
+                    "r"(r9)
+                  : "rcx", "r11", "memory");
+     return ret;
+@@ -90,7 +91,7 @@ static uint64_t syscall6(int call, uint64_t arg1, uint64_t arg2,
+ 
+     asm volatile("syscall"
+                  : "=a"(ret)
+-                 : "a"(sc), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
++                 : "a"(call), "D"(arg1), "S"(arg2), "d"(arg3), "r"(r10),
+                    "r"(r9), "r"(r8)
+                  : "rcx", "r11", "memory");
+     return ret;
+@@ -98,13 +99,13 @@ static uint64_t syscall6(int call, uint64_t arg1, uint64_t arg2,
+ 
+ #ifdef __cplusplus
+ }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call) { return syscalln0(call); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0) { return syscalln1(call, arg0); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1) { return syscalln2(call, arg0, arg1); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2) { return syscalln3(call, arg0, arg1, arg2); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3) { return syscalln4(call, arg0, arg1, arg2, arg3); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4)  { return syscalln5(call, arg0, arg1, arg2, arg3, arg4); }
+-    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5)  { return syscalln6(call, arg0, arg1, arg2, arg3, arg4, arg5); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call) { return syscall0(call); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0) { return syscall1(call, arg0); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1) { return syscall2(call, arg0, arg1); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2) { return syscall3(call, arg0, arg1, arg2); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3) { return syscall4(call, arg0, arg1, arg2, arg3); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4)  { return syscall5(call, arg0, arg1, arg2, arg3, arg4); }
++    __attribute__((always_inline)) static inline long _syscall(uint64_t call, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5)  { return syscall6(call, arg0, arg1, arg2, arg3, arg4, arg5); }
+ 
+     template<typename... T>
+     __attribute__((always_inline)) static inline long syscall(uint64_t call, T... args){
+@@ -112,7 +113,7 @@ static uint64_t syscall6(int call, uint64_t arg1, uint64_t arg2,
+     }
+ #else
+     #define GET_SYSCALL(a0, a1, a2, a3, a4, a5, a6, name, ...) name
+-    #define syscall(...) GET_SYSCALL(__VA_ARGS__, syscalln6, syscalln5, syscalln4, syscalln3, syscalln2, syscalln1, syscalln0)(__VA_ARGS__) 
++    #define syscall(...) GET_SYSCALL(__VA_ARGS__, syscall6, syscall5, syscall4, syscall3, syscall2, syscall1, syscall0)(__VA_ARGS__) 
+ #endif
+ 
+ #endif
+diff --git a/sysdeps/crecent/meson.build b/sysdeps/crecent/meson.build
+index 3e8af0c0..51f660a4 100644
+--- a/sysdeps/crecent/meson.build
++++ b/sysdeps/crecent/meson.build
+@@ -41,7 +41,7 @@ endif
+ if not headers_only
+   crt = custom_target('crt0',
+      build_by_default: true,
+-     command: c_compiler.cmd_array()  ['-c', '-o', '@OUTPUT@', '@INPUT@'],
++     command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+      input: 'crt-x86_64/crt0.S',
+      output: 'crt0.o',
+      install: true,
+-- 
+2.25.1
+

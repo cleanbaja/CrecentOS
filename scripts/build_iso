@@ -1,0 +1,24 @@
+#!/bin/sh
+# A simple script to build ISO image from xbstrap build dir
+
+if [ "x$1" = "x" ]
+then
+	echo "USAGE: build_iso <xbstrap build_dir>"
+	exit 1
+fi
+
+XBSTRAP_ROOT="$1"
+SYSTEM_ROOT="$1/system-root"
+
+cp "$XBSTRAP_ROOT"/tools/host-limine/share/limine/limine.sys "$XBSTRAP_ROOT"/tools/host-limine/share/limine/limine-cd.bin "$XBSTRAP_ROOT"/tools/host-limine/share/limine/limine-eltorito-efi.bin $XBSTRAP_ROOT/system-root/boot/
+
+
+xorriso -as mkisofs -b boot/limine-cd.bin                        \
+	-no-emul-boot -boot-load-size 4 -boot-info-table         \
+	--efi-boot boot/limine-eltorito-efi.bin                  \
+	-efi-boot-part --efi-boot-image --protective-msdos-label \
+	$SYSTEM_ROOT -o ninex.iso
+$XBSTRAP_ROOT/tools/host-limine/bin/limine-install  ninex.iso
+
+echo "build_iso: generated ninex.iso!"
+

@@ -1,0 +1,13 @@
+[binaries]
+c = 'x86_64-crecent-gcc'
+cpp = 'x86_64-crecent-g++'
+ar = 'x86_64-crecent-ar'
+strip = 'x86_64-crecent-strip'
+pkgconfig = 'pkg-config'
+
+[host_machine]
+system = 'crecent'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
