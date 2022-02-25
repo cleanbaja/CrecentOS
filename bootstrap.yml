@@ -196,6 +196,7 @@ packages:
     from_source: 9x-src
     tools_required:
     - host-limine
+    - host-gcc
     build:
     - args: |
         set -e
