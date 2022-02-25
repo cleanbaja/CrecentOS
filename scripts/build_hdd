@@ -1,0 +1,16 @@
+#!/bin/sh
+# A simple script to build a hard drive image (.hdd) from the xbstrap build dir
+
+if [ "x$1" = "x" ]
+then
+	echo "USAGE: build_hdd <xbstrap build_dir>"
+	exit 1
+fi
+
+XBSTRAP_ROOT="$1"
+SYSTEM_ROOT="$1/system-root"
+
+./ports/image-create/image_create.sh -o ninex.hdd -s 256M -t ext2 -p gpt -l limine -b -e -c $SYSTEM_ROOT
+
+echo "build_hdd: generated ninex.hdd!"
+

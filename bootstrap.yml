@@ -126,6 +126,14 @@ tools:
     install:
       - args: [make, install]
 
+  - name: image-create
+    source:
+      subdir: 'ports'
+      git: 'https://github.com/qookei/image_create'
+      branch: 'master'
+    configure:
+    - args: ['chmod', '+x', '@THIS_SOURCE_DIR@/image_create.sh']
+
   - name: host-binutils
     from_source: binutils
     configure:
@@ -176,6 +184,26 @@ tools:
                                '@PREFIX@/x86_64-crecent/bin/as']
           - args: ['ln', '-sf', '../../../host-binutils/x86_64-crecent/bin/ld',
                                '@PREFIX@/x86_64-crecent/bin/ld']
+      - name: libgcc
+        tools_required:
+          - tool: host-gcc
+            stage_dependencies: [compiler]
+        pkgs_required:
+          - mlibc
+        compile:
+          - args: ['make', '-j@PARALLELISM@', 'all-target-libgcc']
+        install:
+          - args: ['make', 'install-strip-target-libgcc']
+
+      - name: libstdc++
+        tools_required:
+          - tool: host-gcc
+            stage_dependencies: [libgcc]
+        compile:
+          - args: ['make', '-j@PARALLELISM@', 'all-target-libstdc++-v3']
+        install:
+          - args: ['make', 'install-strip-target-libstdc++-v3']
+
 
   - name: host-limine
     from_source: limine
@@ -197,13 +225,14 @@ packages:
     tools_required:
     - host-limine
     - host-gcc
+    - image-create
     build:
     - args: |
         set -e
         cd "@THIS_SOURCE_DIR@"
         make CC=x86_64-crecent-gcc LD=x86_64-crecent-ld OPT=Release
-        mkdir -p "@THIS_COLLECT_DIR@"/boot/
-        cp "@THIS_SOURCE_DIR@"/build/src/9x.elf "@THIS_COLLECT_DIR@"/boot/9x.elf
+        mkdir -p "@THIS_COLLECT_DIR@"/boot/kernel/
+        cp "@THIS_SOURCE_DIR@"/build/src/9x.elf "@THIS_COLLECT_DIR@"/boot/kernel/9x.elf
         cp "@THIS_SOURCE_DIR@"/share/limine.cfg "@THIS_COLLECT_DIR@"/boot/limine.cfg
   
   - name: mlibc-headers
@@ -246,5 +275,20 @@ packages:
       - args: ['ninja', 'install']
         environ:
           DESTDIR: '@THIS_COLLECT_DIR@'
+
+  - name: hello
+    source:
+      subdir: 'ports'
+      url: 'https://github.com/lowlevelmemes/hello/archive/1.2a.tar.gz'
+      format: 'tar.gz'
+      extract_path: 'hello-1.2a'
+      patch-path-strip: 3
+    tools_required:
+      - host-gcc
+    build:
+      - args: ['make', 'CC=x86_64-crecent-gcc', '-j@PARALLELISM@']
+        workdir: '@THIS_SOURCE_DIR@'
+      - args: ['make', 'PREFIX=/usr', 'DESTDIR=@THIS_COLLECT_DIR@', 'install']
+        workdir: '@THIS_SOURCE_DIR@'
 
  

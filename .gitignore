@@ -1,5 +1,12 @@
+# xbstrap dirs
 src/
 3rdparty/
 ports/
+
+# images
 *.iso
+*.hdd
+
+# image_create's limine clone
+limine/
 
