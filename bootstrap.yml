@@ -36,7 +36,7 @@ sources:
     - args: [autoconf]
       workdir: '@THIS_SOURCE_DIR@/libstdc++-v3'
   
-  - name: 9x-src
+  - name: 9x
     subdir: src
     git: https://git.sr.ht/~cleanbaja/9x
     branch: stable
@@ -221,20 +221,20 @@ tools:
  
 packages:
   - name: kernel
-    from_source: 9x-src
+    from_source: 9x
     tools_required:
     - host-limine
     - host-gcc
     - image-create
     build:
-    - args: |
-        set -e
-        cd "@THIS_SOURCE_DIR@"
-        make CC=x86_64-crecent-gcc LD=x86_64-crecent-ld OPT=Release
-        mkdir -p "@THIS_COLLECT_DIR@"/boot/kernel/
-        cp "@THIS_SOURCE_DIR@"/build/src/9x.elf "@THIS_COLLECT_DIR@"/boot/kernel/9x.elf
-        cp "@THIS_SOURCE_DIR@"/share/limine.cfg "@THIS_COLLECT_DIR@"/boot/limine.cfg
-  
+      - args: ['make', '-C', '@THIS_SOURCE_DIR@', '-j@PARALLELISM@']
+      - args: ['make', '-C', '@THIS_SOURCE_DIR@', 'install']
+        environ:
+            CC: 'x86_64-crecent-gcc'
+            LD: 'x86_64-crecent-ld'
+            OPT: 'Release'
+            DESTDIR: '@THIS_COLLECT_DIR@/boot'
+
   - name: mlibc-headers
     from_source: mlibc
     implict_package: true
