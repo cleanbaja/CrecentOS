@@ -7,13 +7,13 @@ Subject: [PATCH] Crecent support
  config.sub                  |  4 ++--
  fixincludes/mkfixinc.sh     |  1 +
  gcc/config.gcc              | 12 ++++++++++++
- gcc/config/crecent.h        | 29 +++++++++++++++++++++++++++++
+ gcc/config/ninex.h        | 29 +++++++++++++++++++++++++++++
  libgcc/config.host          |  9 +++++++++
  libgcc/libgcov.h            |  2 ++
  libstdc++-v3/crossconfig.m4 | 12 ++++++++++++
  libtool.m4                  | 14 ++++++++++++++
  8 files changed, 81 insertions(+), 2 deletions(-)
- create mode 100644 gcc/config/crecent.h
+ create mode 100644 gcc/config/ninex.h
 
 diff --git a/fixincludes/mkfixinc.sh b/fixincludes/mkfixinc.sh
 index df90720b7..da6408af2 100755
@@ -23,7 +23,7 @@ index df90720b7..da6408af2 100755
  # Check for special fix rules for particular targets
  case $machine in
      i?86-*-cygwin* | \
-+    x86_64-*-crecent* | \
++    x86_64-*-ninex* | \
      i?86-*-mingw32* | \
      x86_64-*-mingw32* | \
      powerpc-*-eabisim* | \
@@ -35,7 +35,7 @@ index 357b0bed0..de98ca8b5 100644
    tmake_file="${tmake_file} t-freebsd"
    target_has_targetdm=yes
    ;;
-+*-*-crecent*)
++*-*-ninex*)
 +  extra_options="$extra_options gnu-user.opt"
 +  gas=yes
 +  gnu_ld=yes
@@ -51,17 +51,17 @@ index 357b0bed0..de98ca8b5 100644
  			;;
  	esac
  	;;
-+x86_64-*-crecent*)
-+	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h gnu-user.h glibc-stdint.h i386/x86-64.h i386/gnu-user-common.h i386/gnu-user64.h crecent.h"
++x86_64-*-ninex*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h gnu-user.h glibc-stdint.h i386/x86-64.h i386/gnu-user-common.h i386/gnu-user64.h ninex.h"
 +	;;
  x86_64-*-fuchsia*)
  	tmake_file="${tmake_file} i386/t-x86_64-elf"
  	tm_file="${tm_file} i386/unix.h i386/att.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h fuchsia.h"
-diff --git a/gcc/config/crecent.h b/gcc/config/crecent.h
+diff --git a/gcc/config/ninex.h b/gcc/config/ninex.h
 new file mode 100644
 index 000000000..be79aae12
 --- /dev/null
-+++ b/gcc/config/crecent.h
++++ b/gcc/config/ninex.h
 @@ -0,0 +1,29 @@
 +#undef TARGET_CRECENT
 +#define TARGET_CRECENT 1
@@ -86,9 +86,9 @@ index 000000000..be79aae12
 +#undef TARGET_OS_CPP_BUILTINS
 +#define TARGET_OS_CPP_BUILTINS()         \
 +  do {                                   \
-+    builtin_define ("__crecent__");    \
++    builtin_define ("__ninex__");    \
 +    builtin_define ("__unix__");         \
-+    builtin_assert ("system=crecent"); \
++    builtin_assert ("system=ninex"); \
 +    builtin_assert ("system=unix");      \
 +    builtin_assert ("system=posix");     \
 +  } while (0);
@@ -100,7 +100,7 @@ index 50f000622..de1bb0919 100644
    tmake_file="$tmake_file t-crtstuff-pic t-libgcc-pic t-eh-dw2-dip t-slibgcc t-slibgcc-fuchsia"
    extra_parts="crtbegin.o crtend.o"
    ;;
-+*-*-crecent*)
++*-*-ninex*)
 +  extra_parts="$extra_parts crti.o crtbegin.o crtbeginS.o crtend.o crtendS.o crtn.o"
 +  tmake_file="$tmake_file t-crtstuff-pic"
 +  tmake_file="$tmake_file t-slibgcc t-slibgcc-gld t-slibgcc-elf-ver t-libgcc-pic"
@@ -112,7 +112,7 @@ index 50f000622..de1bb0919 100644
  x86_64-*-fuchsia*)
  	tmake_file="$tmake_file t-libgcc-pic"
  	;;
-+x86_64-*-crecent*)
++x86_64-*-ninex*)
 +	extra_parts="$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
 +	tmake_file="$tmake_file i386/t-crtpc t-crtfm i386/t-crtstuff t-dfprules"
 +	;;
@@ -140,7 +140,7 @@ index ff44d5ae0..38cb0878d 100644
      AC_CHECK_FUNCS(uselocale)
      ;;
 
-+  *-crecent*)
++  *-ninex*)
 +    GLIBCXX_CHECK_COMPILER_FEATURES
 +    GLIBCXX_CHECK_LINKER_FEATURES
 +    GLIBCXX_CHECK_MATH_SUPPORT
@@ -163,7 +163,7 @@ index 17f8e5f30..f6daabc68 100644
    dynamic_linker='GNU/Linux ld.so'
    ;;
 
-+crecent*)
++ninex*)
 +  version_type=linux
 +  need_lib_prefix=no
 +  need_version=no
@@ -180,7 +180,7 @@ index 17f8e5f30..f6daabc68 100644
    lt_cv_deplibs_check_method=pass_all
    ;;
 
-+lyre*)
++ninex*)
 +  lt_cv_deplibs_check_method=pass_all
 +  ;;
 +

@@ -1,7 +1,7 @@
 From 67a0c2cf260bb15031c04a15357f1a2c7f3f3dbc Mon Sep 17 00:00:00 2001
 From: cleanbaja <cleanbaja@protonmail.com>
 Date: Thu, 24 Feb 2022 11:30:34 +0200
-Subject: [PATCH] Crecent support
+Subject: [PATCH] 9x support
 
 ---
  bfd/config.bfd              | 5 +++++
@@ -20,7 +20,7 @@ index 30087e3b..9ca38637 100644
      targ_defvec=i386_elf32_vec
      targ_selvecs="iamcu_elf32_vec i386_pe_vec i386_pei_vec"
      ;;
-+  x86_64-*-crecent*)
++  x86_64-*-ninex*)
 +    targ_defvec=x86_64_elf64_vec
 +    targ_selvecs=i386_elf32_vec
 +    want64=true
@@ -37,7 +37,7 @@ index 7384e919..6905e3f3 100755
  	     | sym* |  plan9* | psp* | sim* | xray* | os68k* | v88r* \
  	     | hiux* | abug | nacl* | netware* | windows* \
 -	     | os9* | macos* | osx* | ios* \
-+	     | os9* | macos* | osx* | ios* | crecent* \
++	     | os9* | macos* | osx* | ios* | ninex* \
  	     | mpw* | magic* | mmixware* | mon960* | lnews* \
  	     | amigaos* | amigados* | msdos* | newsos* | unicos* | aof* \
  	     | aos* | aros* | cloudabi* | sortix* | twizzler* \
@@ -49,7 +49,7 @@ index 338892ad..06235798 100644
    i386-*-beos*)				fmt=elf ;;
    i386-*-elfiamcu)			fmt=elf arch=iamcu ;;
    i386-*-elf*)				fmt=elf ;;
-+  i386-*-crecent*)				fmt=elf ;;
++  i386-*-ninex*)				fmt=elf ;;
    i386-*-fuchsia*)			fmt=elf ;;
    i386-*-genode*)			fmt=elf ;;
    i386-*-bsd*)				fmt=aout em=386bsd ;;
@@ -61,7 +61,7 @@ index 6205d7c9..dba57026 100644
  i[3-7]86-*-bsdi*)	targ_emul=i386bsd
  			targ_extra_ofiles=
  			;;
-+x86_64-*-crecent*)
++x86_64-*-ninex*)
 +			targ_emul=elf_x86_64
 +			targ_extra_emuls=elf_i386
 +			;;
@@ -77,7 +77,7 @@ index 48d09747..8a6426fb 100644
  # a 64-bit specific directory.
  case "$target" in
 -  x86_64*-linux*|i[3-7]86-*-linux-*)
-+  x86_64*-linux*|i[3-7]86-*-linux-*|x86_64*-crecent*)
++  x86_64*-linux*|i[3-7]86-*-linux-*|x86_64*-ninex*)
      case "$EMULATION_NAME" in
        *64*)
  	LIBPATH_SUFFIX=64
@@ -89,7 +89,7 @@ index df09b7b8..4a596b88 100644
  #include "config.h"
  #endif
 
-+#if defined (__crecent__)
++#if defined (__ninex__)
 +#define uint unsigned int
 +#endif
 +

@@ -1,7 +1,7 @@
 From 898226deb8d913cbdfc75d9182f4e5951ca7e304 Mon Sep 17 00:00:00 2001
 From: cleanabaja <cleanbaja@protonmail.com>
 Date: Wed, 23 Feb 2022 14:46:29 +0100
-Subject: [PATCH] Crecent support
+Subject: [PATCH] 9x support
 
 ---
  build-aux/ltmain.in |  2 +-
@@ -29,7 +29,7 @@ index a3bc337..85c72cc 100644
    hardcode_into_libs=yes
    ;;
  
-+crecent*)
++ninex*)
 +  version_type=linux
 +  need_lib_prefix=no
 +  need_version=no
@@ -47,7 +47,7 @@ index a3bc337..85c72cc 100644
    lt_cv_deplibs_check_method=pass_all
    ;;
  
-+lyre*)
++ninex*)
 +  lt_cv_deplibs_check_method=pass_all
 +  ;;
 +

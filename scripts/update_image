@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# A somewhat complex script for syncing SYSTEM_ROOT with the physical image
+# does other partition stuff too
+
+set -ex
+
+if [ "x$1" = "x" ]
+then
+	echo "USAGE: update_image <xbstrap build_dir>"
+	exit 1
+fi
+
+BUILD_ROOT=$1
+LOOP_ROOT=`sudo losetup -Pf --show $BUILD_ROOT/image`
+P0MNT_DIR=/tmp/mount$(shuf -i 0-100000 -n1)
+P1MNT_DIR=/tmp/mount$(shuf -i 0-100000 -n1)
+P0MNT_ID="${LOOP_ROOT}p1"
+P1MNT_ID="${LOOP_ROOT}p2"
+
+# Mount the 2 partitions
+mkdir $P0MNT_DIR $P1MNT_DIR
+sudo mount -o rw $P0MNT_ID $P0MNT_DIR
+sudo mount -o rw $P1MNT_ID $P1MNT_DIR
+
+# Copy over the kernel and other files to the first partition
+sudo rsync -rtDvz --delete $BUILD_ROOT/system-root/boot/ $P0MNT_DIR/boot/
+
+# Then copy over the rest onto the second partition
+sudo rsync -a --delete $BUILD_ROOT/system-root/boot/ $P1MNT_DIR/boot/
+sudo rsync -a --delete $BUILD_ROOT/system-root/usr/ $P1MNT_DIR/boot/
+sudo rsync -a --delete $BUILD_ROOT/system-root/bin/ $P1MNT_DIR/boot/
+sudo rsync -a --delete $BUILD_ROOT/system-root/etc/ $P1MNT_DIR/boot/
+
+# Cleanup our mess
+sudo umount $P0MNT_DIR 
+sudo umount $P1MNT_DIR
+rm -rf $P0MNT_DIR $P1MNT_DIR
+sudo losetup -d $LOOP_ROOT 
+
