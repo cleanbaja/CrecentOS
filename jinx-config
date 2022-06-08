@@ -1,0 +1,2 @@
+# Build with O2 by default (O3/Ofast break certain packages)
+common_cflags="-O2 -pipe"

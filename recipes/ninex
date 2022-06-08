@@ -1,0 +1,23 @@
+name=ninex
+from_source=ninex
+revision=1
+hostdeps="gcc automake autoconf"
+deps=""
+imagedeps="gcc nasm"
+
+configure() {
+    ${source_dir}/configure    \
+        CC=x86_64-ninex-gcc    \
+        LD=x86_64-ninex-ld     \
+        AR=x86_64-ninex-ar     \
+        CFLAGS="-O2 -pipe"
+}
+
+build() {
+    make -j${parallelism}
+}
+
+install() {
+    DESTDIR="${dest_dir}" make install-strip
+}
+

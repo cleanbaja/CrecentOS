@@ -1,0 +1,36 @@
+diff -u a/src/jobs.c b/src/jobs.c
+--- a/src/jobs.c	2021-09-03 02:01:44.000000000 -0500
++++ b/src/jobs.c	2022-06-07 11:12:12.949737748 -0500
+@@ -112,6 +112,9 @@
+ STATIC void forkchild(struct job *, union node *, int);
+ STATIC void forkparent(struct job *, union node *, int, pid_t);
+ STATIC int dowait(int, struct job *);
++#ifdef __ninex__
++STATIC char* stpncpy (char *dst, const char *src, size_t len);
++#endif
+ #ifdef SYSV
+ STATIC int onsigchild(void);
+ #endif
+@@ -971,7 +974,7 @@
+ 	sigblockall(NULL);
+ 	vforked++;
+ 
+-	pid = vfork();
++	pid = fork();
+ 
+ 	if (!pid) {
+ 		forkchild(jp, n, FORK_FG);
+@@ -1545,3 +1548,13 @@
+ 		jobno(job), job->nprocs, status, retval));
+ 	return retval;
+ }
++
++// Ninex uses mlibc, which dosen't have strpncpy, so stub it here...
++#ifdef __ninex__
++char* stpncpy (char *dst, const char *src, size_t len) {
++	size_t n = strlen (src);
++	if (n > len)
++		n = len;
++	return strncpy (dst, src, len) + n;
++}
++#endif

@@ -1,0 +1,11 @@
+name=ninex
+version=0.0
+source_method=git
+clone_url="git@git.sr.ht:~cleanbaja/9x"
+tag="new_start"
+hostdeps="autoconf automake"
+imagedeps="git"
+
+regenerate() {
+    NOCONFIGURE=yes NORUN=yes ./autogen.sh
+}

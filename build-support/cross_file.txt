@@ -1,0 +1,13 @@
+[binaries]
+c = 'x86_64-ninex-gcc'
+cpp = 'x86_64-ninex-g++'
+ar = 'x86_64-ninex-ar'
+strip = 'x86_64-ninex-strip'
+pkgconfig = 'pkg-config'
+
+[host_machine]
+system = 'ninex'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+

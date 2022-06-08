@@ -1,0 +1,21 @@
+name=dash
+from_source=dash
+revision=1
+imagedeps="gcc"
+hostdeps="gcc autoconf automake"
+deps="mlibc"
+
+configure() {
+  "${source_dir}"/configure --host=x86_64-ninex --prefix=${prefix}
+}
+
+build() {
+    make -j${parallelism}
+}
+
+install() {
+    DESTDIR="${dest_dir}" make install-strip
+    mkdir -p "${dest_dir}"/bin
+    ln -s /usr/bin/dash "${dest_dir}"/bin/dash
+    ln -s /usr/bin/dash "${dest_dir}"/bin/sh
+}

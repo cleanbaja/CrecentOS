@@ -1,0 +1,8 @@
+name=dash
+version=0.5.11.5
+source_method=tarball
+tarball_url="http://gondor.apana.org.au/~herbert/dash/files/dash-${version}.tar.gz"
+
+regenerate() {
+    true
+}

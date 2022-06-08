@@ -1,12 +1,12 @@
-# xbstrap dirs
-src/
-3rdparty/
-ports/
+# jinx dirs
+builds/
+host-builds/
+host-pkgs/
+pkgs/
+sources/
 
 # images
 *.iso
 *.hdd
 
-# image_create's limine clone
-limine/
 
