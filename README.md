@@ -1,6 +1,6 @@
 ## CrecentOS
 
-CrecentOS is a modern unix operating system designed around the [9x kernel](https://github.com/cleanbaja/9x). As its reference implmentation, CrecentOS recives first-class support from the 9x project. Finally, CrecentOS uses a combination of Unix & GNU Applications, to achive its goals.
+CrecentOS is a modern unix operating system designed around the [9x kernel](https://github.com/cleanbaja/9x). As its reference implmentation, CrecentOS recives first-class support from the 9x project. Finally, CrecentOS uses a combination of Unix & GNU Applications, to achive its modern userspace.
 
 ### Building
 
@@ -10,7 +10,7 @@ To build CrecentOS, one must have jinx installed. Either click on [this](https:/
 jinx build-all
 ```
 
-**NOTE: For the above command to work, you must be in the docker group!**
+*NOTE: For the above command to work, you must be in the docker group!*
 
 ### Running
 
