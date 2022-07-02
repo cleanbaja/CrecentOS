@@ -10,7 +10,7 @@ configure() {
         CC=x86_64-ninex-gcc    \
         LD=x86_64-ninex-ld     \
         AR=x86_64-ninex-ar     \
-        CFLAGS="-O2 -pipe"
+        CFLAGS="${common_cflags}"
 }
 
 build() {

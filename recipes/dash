@@ -6,7 +6,10 @@ hostdeps="gcc autoconf automake"
 deps="mlibc"
 
 configure() {
-  "${source_dir}"/configure --host=x86_64-ninex --prefix=${prefix}
+  "${source_dir}"/configure \
+    --host=x86_64-ninex     \
+    --prefix=${prefix}      \
+    CFLAGS="${common_cflags}"
 }
 
 build() {

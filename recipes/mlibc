@@ -6,7 +6,7 @@ hostdeps="gcc-compiler"
 deps="mlibc-headers"
 
 configure() {
-    meson \
+    CFLAGS="${common_cflags}" meson \
         --cross-file ${base_dir}/build-support/cross_file.txt \
         --prefix=${prefix} \
         --libdir=lib \

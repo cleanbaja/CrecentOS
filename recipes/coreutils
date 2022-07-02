@@ -18,7 +18,7 @@ configure() {
         --host=x86_64-ninex    \
         --prefix=${prefix}     \
         FORCE_UNSAFE_CONFIGURE=1 \
-        CFLAGS="-DSLOW_BUT_NO_HACKS -Wno-error -O2 -pipe"
+        CFLAGS="-DSLOW_BUT_NO_HACKS -Wno-error ${common_cflags}"
 }
 
 build() {

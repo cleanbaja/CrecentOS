@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 if test -z "$1"
 then
