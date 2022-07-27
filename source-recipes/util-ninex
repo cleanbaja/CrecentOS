@@ -1,0 +1,7 @@
+name=util-ninex
+version=0.0
+source_dir="util-ninex"
+
+regenerate() {
+	true
+}

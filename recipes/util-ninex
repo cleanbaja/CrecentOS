@@ -1,0 +1,19 @@
+name=util-ninex
+from_source=util-ninex
+revision=1
+hostdeps="gcc binutils"
+deps="mlibc"
+
+configure() {
+    true
+}
+
+build() {
+    cd ${source_dir}
+    make -j${parallelism} CC=x86_64-ninex-gcc
+}
+
+install() {
+    cd ${source_dir}
+    make install PREFIX="${prefix}" DESTDIR="${dest_dir}"
+}
